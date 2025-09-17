@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Local Token Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    h1 { color: #333; }
+    form { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; }
+    input[type="text"] { padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; width: 200px; }
+    button { padding: 10px 15px; border: none; border-radius: 5px; background-color: #007BFF; color: white; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    #tokenList { margin-top: 20px; padding: 10px; background: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 300px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>Local Token System</h1>
+
+  <form id="tokenForm">
+    <input type="text" id="username" placeholder="Enter your name" required>
+    <br>
+    <button type="submit">Generate Token</button>
+  </form>
+
+  <div id="tokenList">
+    <h3>Generated Tokens</h3>
+    <ul id="tokens"></ul>
+  </div>
+
+  <script>
+    let tokens = JSON.parse(localStorage.getItem("tokens")) || [];
+
+    const form = document.getElementById("tokenForm");
+    const tokensList = document.getElementById("tokens");
+
+    // Render saved tokens on page load
+    function renderTokens() {
+      tokensList.innerHTML = "";
+      tokens.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item.name + " → " + item.token;
+        tokensList.appendChild(li);
+      });
+    }
+    renderTokens();
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("username").value;
+      const tokenNumber = tokens.length + 1;
+      const token = "TKN" + String(tokenNumber).padStart(3, "0");
+
+      const entry = { name: name, token: token, time: new Date() };
+      tokens.push(entry);
+
+      // Save to browser storage
+      localStorage.setItem("tokens", JSON.stringify(tokens));
+
+      renderTokens();
+      document.getElementById("username").value = "";
+    });
+  </script>
+</body>
+</html>
